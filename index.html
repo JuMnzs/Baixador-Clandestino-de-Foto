@@ -16,16 +16,12 @@ function downloadImagem() {
   var urlImagem = document.getElementById("urlImagem").value;
   if (urlImagem) {
     var nomeArquivo = getNomeArquivo(urlImagem);
-    fetch(urlImagem)
-      .then(response => response.blob())
-      .then(blob => {
-        var link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = nomeArquivo;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
+    var link = document.createElement("a");
+    link.href = urlImagem;
+    link.download = nomeArquivo;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   } else {
     alert("Por favor, insira o URL da imagem.");
   }
