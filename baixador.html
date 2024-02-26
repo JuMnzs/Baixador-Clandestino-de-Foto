@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baixador Clandestino Julio</title>
+</head>
+<body>
+
+<label for="urlImagem">URL da Imagem:</label>
+<input type="text" id="urlImagem" placeholder="Insira o URL da imagem">
+<button onclick="downloadImagem()">Baixar Imagem</button>
+
+<script>
+function downloadImagem() {
+  var urlImagem = document.getElementById("urlImagem").value;
+  if (urlImagem) {
+    var nomeArquivo = getNomeArquivo(urlImagem);
+    fetch(urlImagem)
+      .then(response => response.blob())
+      .then(blob => {
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = nomeArquivo;
+        link.click();
+      });
+  } else {
+    alert("Por favor, insira o URL da imagem.");
+  }
+}
+
+function getNomeArquivo(url) {
+  var partes = url.split("/");
+  return partes[partes.length - 1];
+}
+</script>
+
+</body>
+</html>
