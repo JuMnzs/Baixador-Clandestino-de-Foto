@@ -3,38 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-<title>Baixador Clandestino Julio</title>
+<title>Consulta de DNS</title>
+    <link rel="stylesheet" href="style.css"/>
+<style>
+  #resultados {
+    margin-top: 20px;
+  }
+</style>
 </head>
 <body>
 
-<label for="urlImagem">URL da Imagem:</label>
-<input type="text" id="urlImagem" placeholder="Insira o URL da imagem">
-<button onclick="downloadImagem()">Baixar Imagem</button>
+<label for="dominio">Digite o domínio para consultar:</label>
+<input type="text" id="dominio" placeholder="Ex: example.com">
+<button onclick="consultarDNS()">Consultar</button>
+
+<div id="resultados"></div>
 
 <script>
-function downloadImagem() {
-  var urlImagem = document.getElementById("urlImagem").value;
-  if (urlImagem) {
-    var nomeArquivo = getNomeArquivo(urlImagem);
-    fetch(urlImagem)
-      .then(response => response.blob())
-      .then(blob => {
-        var link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = nomeArquivo;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
-  } else {
-    alert("Por favor, insira o URL da imagem.");
-  }
-}
+function consultarDNS() {
+  var dominio = document.getElementById("dominio").value;
+  var resultadosDiv = document.getElementById("resultados");
+  resultadosDiv.innerHTML = "";
 
-function getNomeArquivo(url) {
-  var partes = url.split("/");
-  return partes[partes.length - 1];
+  fetch(`https://dns.google/resolve?name=${dominio}`, { method: "GET" })
+    .then(response => response.json())
+    .then(data => {
+      var registros = data.Answer || [];
+      registros.forEach(registro => {
+        var tipo = registro.type;
+        var valor = tipo === "CNAME" ? registro.data.target : registro.data;
+        resultadosDiv.innerHTML += `<p>${tipo}: ${valor}</p>`;
+      });
+    })
+    .catch(error => {
+      console.error('Ocorreu um erro ao consultar o DNS:', error);
+      resultadosDiv.innerHTML = "<p>Ocorreu um erro ao consultar o DNS.</p>";
+    });
 }
 </script>
 
